@@ -16,6 +16,13 @@ db.init_app(app)
 
 api = Api(app)
 
+# class Home(Resource):
+    
+#     def Home(self):
+#      return '<h1> This is Home </h1>'
+
+# api.add_resource('/home')
+
 class Plants(Resource):
 
     def get(self):
@@ -44,6 +51,19 @@ class PlantByID(Resource):
     def get(self, id):
         plant = Plant.query.filter_by(id=id).first().to_dict()
         return make_response(jsonify(plant), 200)
+    
+    
+    def delete(self, id):
+            plant = Plant.query.filter_by(id=id).first()
+
+            if not plant:
+                return make_response(jsonify({'error': 'Plant not found'}), 404)
+
+            db.session.delete(plant)
+            db.session.commit()
+
+            return make_response(jsonify({'message': 'Plant deleted successfully'}), 200)
+        
 
 api.add_resource(PlantByID, '/plants/<int:id>')
         
